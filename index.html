@@ -5,136 +5,152 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Natho Ya Bätsi - Panel Principal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Quicksand', sans-serif; }
+    .card-shadow { box-shadow: 0 8px 0px rgba(0,0,0,0.05); }
+    .card-shadow:hover { transform: translateY(-2px); box-shadow: 0 12px 0px rgba(0,0,0,0.07); }
+    .card-shadow:active { transform: translateY(4px); box-shadow: 0 2px 0px rgba(0,0,0,0.05); }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col">
 
-  <!-- CABECERA INSTITUCIONAL -->
-  <header class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shadow-md">
+  <!-- CABECERA MÁS CÁLIDA -->
+  <header class="bg-white border-b-4 border-stone-200 px-6 py-6 flex justify-between items-center">
     <div>
-      <h1 class="text-xl font-bold tracking-tight text-white">Natho Ya Bätsi</h1>
-      <p class="text-xs text-slate-400">Sistema de Adaptación Pedagógica • Temoaya, Estado de México</p>
+      <h1 class="text-3xl font-bold text-orange-600 tracking-tight">Natho Ya Bätsi</h1>
+      <p class="text-sm font-semibold text-stone-500 uppercase tracking-wider">Temoaya • Aprendizaje para todos</p>
     </div>
-    <div class="flex items-center space-x-3">
-      <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-medium px-3 py-1.5 rounded-md">
-        Entorno Offline • 80/90%
+    <div class="hidden md:flex items-center">
+      <span class="bg-stone-100 text-stone-600 border-2 border-stone-200 text-xs font-bold px-4 py-2 rounded-full">
+        SISTEMA LISTO PARA USAR
       </span>
     </div>
   </header>
 
-  <!-- PANEL PRINCIPAL DE SELECCIÓN DE USUARIO Y OPCIONES -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-8 flex flex-col justify-center">
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 max-w-5xl w-full mx-auto p-6 md:p-12 flex flex-col justify-center">
     
-    <div class="mb-8 text-center">
-      <h2 class="text-2xl font-bold text-white mb-2">Seleccione el perfil de acceso</h2>
-      <p class="text-sm text-slate-400">Elija su rol dentro de la plataforma para cargar el módulo correspondiente.</p>
+    <div class="mb-12 text-center">
+      <h2 class="text-3xl font-bold text-stone-800 mb-3">¡Bienvenida y bienvenido!</h2>
+      <p class="text-lg text-stone-600">Elige tu camino para comenzar a aprender hoy</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       
-      <!-- TARJETA ROL DOCENTE -->
-      <div onclick="seleccionarRol('docente')" class="bg-slate-900 border border-slate-800 hover:border-emerald-600 rounded-xl p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-lg">
-        <div>
-          <div class="w-10 h-10 rounded-lg bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 font-bold mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
-            D
-          </div>
-          <h3 class="text-lg font-semibold text-white mb-1">Módulo Docente</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Carga de contenidos escolares, gestión de temarios y traducción pedagógica al otomí de Temoaya.
-          </p>
+      <!-- TARJETA DOCENTE -->
+      <div onclick="seleccionarRol('docente')" class="bg-white border-4 border-orange-200 rounded-3xl p-8 cursor-pointer transition-all card-shadow group">
+        <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">
+          D
         </div>
-        <div class="mt-6 pt-4 border-t border-slate-800 text-xs font-semibold text-emerald-400 flex items-center justify-between">
-          <span>Acceder al panel</span>
-          <span>→</span>
+        <h3 class="text-2xl font-bold text-orange-700 mb-3">Maestros</h3>
+        <p class="text-stone-600 leading-relaxed font-medium">
+          Prepara las clases y traduce lecciones al otomí para tus alumnos.
+        </p>
+        <div class="mt-8 flex items-center text-orange-600 font-bold">
+          <span>Entrar aquí</span>
+          <span class="ml-2">→</span>
         </div>
       </div>
 
-      <!-- TARJETA ROL ESTUDIANTE -->
-      <div onclick="seleccionarRol('estudiante')" class="bg-slate-900 border border-slate-800 hover:border-sky-600 rounded-xl p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-lg">
-        <div>
-          <div class="w-10 h-10 rounded-lg bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400 font-bold mb-4 group-hover:bg-sky-600 group-hover:text-white transition">
-            E
-          </div>
-          <h3 class="text-lg font-semibold text-white mb-1">Módulo Estudiante</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Visualización de lecciones adaptadas con soporte de audio nativo y ejemplos contextuales locales.
-          </p>
+      <!-- TARJETA ESTUDIANTE -->
+      <div onclick="seleccionarRol('estudiante')" class="bg-white border-4 border-sky-200 rounded-3xl p-8 cursor-pointer transition-all card-shadow group">
+        <div class="w-16 h-16 rounded-2xl bg-sky-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">
+          E
         </div>
-        <div class="mt-6 pt-4 border-t border-slate-800 text-xs font-semibold text-sky-400 flex items-center justify-between">
-          <span>Acceder al panel</span>
-          <span>→</span>
+        <h3 class="text-2xl font-bold text-sky-700 mb-3">Alumnos</h3>
+        <p class="text-stone-600 leading-relaxed font-medium">
+          Mira tus lecciones, escucha los audios y aprende cosas nuevas.
+        </p>
+        <div class="mt-8 flex items-center text-sky-600 font-bold">
+          <span>¡Empezar!</span>
+          <span class="ml-2">→</span>
         </div>
       </div>
 
-      <!-- TARJETA ROL CONFIGURACIÓN / REPOSITORIO -->
-      <div onclick="seleccionarRol('configuracion')" class="bg-slate-900 border border-slate-800 hover:border-indigo-600 rounded-xl p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-lg">
-        <div>
-          <div class="w-10 h-10 rounded-lg bg-indigo-950 border border-indigo-800 flex items-center justify-center text-indigo-400 font-bold mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
-            C
-          </div>
-          <h3 class="text-lg font-semibold text-white mb-1">Base de Datos y Léxico</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Administración del diccionario local SQLite, respaldo de archivos y sincronización del repositorio Git.
-          </p>
+      <!-- TARJETA CONFIGURACIÓN -->
+      <div onclick="seleccionarRol('configuracion')" class="bg-white border-4 border-emerald-200 rounded-3xl p-8 cursor-pointer transition-all card-shadow group">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">
+          C
         </div>
-        <div class="mt-6 pt-4 border-t border-slate-800 text-xs font-semibold text-indigo-400 flex items-center justify-between">
-          <span>Gestionar datos</span>
-          <span>→</span>
+        <h3 class="text-2xl font-bold text-emerald-700 mb-3">Biblioteca</h3>
+        <p class="text-stone-600 leading-relaxed font-medium">
+          Organiza los libros digitales y la información del sistema.
+        </p>
+        <div class="mt-8 flex items-center text-emerald-600 font-bold">
+          <span>Administrar</span>
+          <span class="ml-2">→</span>
         </div>
       </div>
 
     </div>
 
-    <!-- CONTENEDOR DINÁMICO DE VISTAS -->
-    <div id="vistaDinamica" class="mt-8 bg-slate-900 border border-slate-800 rounded-xl p-6 hidden">
-      <!-- Aquí se cargará dinámicamente el contenido según el rol seleccionado -->
+    <!-- PANEL DE ACCIÓN DINÁMICO -->
+    <div id="vistaDinamica" class="mt-12 bg-white border-4 border-stone-200 rounded-3xl p-8 hidden">
+      <!-- Contenido dinámico -->
     </div>
 
   </main>
 
-  <!-- PIE DE PÁGINA -->
-  <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-900">
-    Equipo 3: BabelTech • Hackatón Reto 6
+  <footer class="text-center py-8 text-sm font-bold text-stone-400">
+    BabelTech • Proyecto Educativo Temoaya
   </footer>
 
-  <!-- LÓGICA DE CONTROL DE ROLES -->
   <script>
     function seleccionarRol(rol) {
       const contenedor = document.getElementById('vistaDinamica');
       contenedor.classList.remove('hidden');
+      contenedor.scrollIntoView({ behavior: 'smooth' });
 
       if (rol === 'docente') {
+        contenedor.className = "mt-12 bg-white border-4 border-orange-200 rounded-3xl p-8";
         contenedor.innerHTML = `
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-emerald-400">Panel de Control: Docente</h3>
-            <button onclick="cerrarVista()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded">Cerrar</button>
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h3 class="text-2xl font-bold text-orange-700">Panel del Maestro</h3>
+              <p class="text-stone-600">Escribe aquí el tema de hoy para adaptarlo.</p>
+            </div>
+            <button onclick="cerrarVista()" class="bg-stone-100 hover:bg-stone-200 text-stone-500 font-bold py-2 px-4 rounded-xl transition">Cerrar</button>
           </div>
-          <p class="text-sm text-slate-300 mb-4">Ingrese la lección escolar en español para procesar su adaptación al contexto de Temoaya.</p>
-          <textarea class="w-full h-32 bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-200 text-sm focus:outline-none focus:border-emerald-600" placeholder="Escriba el texto del contenido académico..."></textarea>
-          <button class="mt-3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 text-sm font-semibold px-4 py-2 rounded-lg transition">Guardar y Procesar Localmente</button>
+          <textarea class="w-full h-40 bg-stone-50 border-2 border-stone-200 rounded-2xl p-4 text-stone-700 focus:ring-4 focus:ring-orange-100 focus:border-orange-400 outline-none transition" placeholder="Ejemplo: Las partes de la planta..."></textarea>
+          <button class="mt-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg active:transform active:scale-95">Guardar y Preparar Lección</button>
         `;
       } else if (rol === 'estudiante') {
+        contenedor.className = "mt-12 bg-white border-4 border-sky-200 rounded-3xl p-8";
         contenedor.innerHTML = `
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-sky-400">Panel de Control: Estudiante</h3>
-            <button onclick="cerrarVista()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded">Cerrar</button>
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h3 class="text-2xl font-bold text-sky-700">Tus Lecciones</h3>
+              <p class="text-stone-600">Elige la actividad que quieres realizar:</p>
+            </div>
+            <button onclick="cerrarVista()" class="bg-stone-100 hover:bg-stone-200 text-stone-500 font-bold py-2 px-4 rounded-xl transition">Cerrar</button>
           </div>
-          <p class="text-sm text-slate-300 mb-4">Seleccione la unidad de aprendizaje disponible en el sistema local:</p>
-          <div class="space-y-2">
-            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg flex justify-between items-center text-sm">
-              <span>Unidad 1: Matemáticas Básicas (Variante Otomí de San Pedro Arriba)</span>
-              <button class="bg-sky-600 hover:bg-sky-500 text-white text-xs px-3 py-1.5 rounded font-medium">Abrir Lección</button>
+          <div class="grid gap-4">
+            <div class="p-6 bg-sky-50 border-2 border-sky-100 rounded-2xl flex justify-between items-center group hover:border-sky-300 transition">
+              <div>
+                <span class="block text-lg font-bold text-sky-900">Matemáticas en Otomí</span>
+                <span class="text-sm text-sky-600 font-medium">Unidad 1 • San Pedro Arriba</span>
+              </div>
+              <button class="bg-sky-500 text-white font-bold py-2 px-6 rounded-xl hover:bg-sky-600 transition">Abrir</button>
             </div>
           </div>
         `;
       } else {
+        contenedor.className = "mt-12 bg-white border-4 border-emerald-200 rounded-3xl p-8";
         contenedor.innerHTML = `
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-indigo-400">Administración de Base de Datos y Repositorio</h3>
-            <button onclick="cerrarVista()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded">Cerrar</button>
+          <div class="flex justify-between items-start mb-6">
+            <h3 class="text-2xl font-bold text-emerald-700">Gestión de Datos</h3>
+            <button onclick="cerrarVista()" class="bg-stone-100 hover:bg-stone-200 text-stone-500 font-bold py-2 px-4 rounded-xl transition">Cerrar</button>
           </div>
-          <p class="text-sm text-slate-300 mb-2">Estado de la base de datos local SQLite: <span class="text-emerald-400 font-mono">Conectada (natho_db.sqlite)</span></p>
-          <p class="text-sm text-slate-300 mb-4">Control de versiones Git: <span class="text-indigo-400 font-mono">Rama principal (main) sincronizada</span></p>
-          <button class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">Verificar Integridad Local</button>
+          <div class="space-y-4 mb-6">
+            <div class="flex items-center p-4 bg-emerald-50 rounded-xl">
+              <div class="w-3 h-3 bg-emerald-500 rounded-full mr-3"></div>
+              <span class="text-stone-700 font-medium italic text-sm">Base de datos lista: natho_db.sqlite</span>
+            </div>
+          </div>
+          <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">Sincronizar Información</button>
         `;
       }
     }
