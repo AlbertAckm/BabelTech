@@ -158,6 +158,21 @@
     function cerrarVista() {
       document.getElementById('vistaDinamica').classList.add('hidden');
     }
+
+  const db = require('./database/database.js');
+
+   function guardarLeccionEnBD(titulo, espanol, otomi) {
+  const query = `INSERT INTO lecciones (titulo, contenido_espanol, contenido_otomi) VALUES (?, ?, ?)`;
+  
+  db.run(query, [titulo, espanol, otomi], function(err) {
+    if (err) {
+      console.error('Error al guardar en la BD:', err.message);
+      alert('Error al guardar la lección localmente.');
+    } else {
+      alert(`Lección guardada con éxito (ID local: ${this.lastID})`);
+    }
+  });
+}
   </script>
 
 </body>
