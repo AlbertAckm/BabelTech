@@ -17,7 +17,7 @@
 </head>
 <body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col">
 
-  <!-- CABECERA MÁS CÁLIDA -->
+  <!-- CABECERA -->
   <header class="bg-white border-b-4 border-stone-200 px-6 py-6 flex justify-between items-center">
     <div>
       <h1 class="text-3xl font-bold text-orange-600 tracking-tight">Natho Ya Bätsi</h1>
@@ -32,65 +32,42 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 max-w-5xl w-full mx-auto p-6 md:p-12 flex flex-col justify-center">
-    
+
     <div class="mb-12 text-center">
       <h2 class="text-3xl font-bold text-stone-800 mb-3">¡Bienvenida y bienvenido!</h2>
       <p class="text-lg text-stone-600">Elige tu camino para comenzar a aprender hoy</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      
+
       <!-- TARJETA DOCENTE -->
       <div onclick="seleccionarRol('docente')" class="bg-white border-4 border-orange-200 rounded-3xl p-8 cursor-pointer transition-all card-shadow group">
-        <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">
-          D
-        </div>
+        <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">D</div>
         <h3 class="text-2xl font-bold text-orange-700 mb-3">Maestros</h3>
-        <p class="text-stone-600 leading-relaxed font-medium">
-          Prepara las clases y traduce lecciones al otomí para tus alumnos.
-        </p>
-        <div class="mt-8 flex items-center text-orange-600 font-bold">
-          <span>Entrar aquí</span>
-          <span class="ml-2">→</span>
-        </div>
+        <p class="text-stone-600 leading-relaxed font-medium">Prepara las clases y traduce lecciones al otomí para tus alumnos.</p>
+        <div class="mt-8 flex items-center text-orange-600 font-bold"><span>Entrar aquí</span><span class="ml-2">→</span></div>
       </div>
 
       <!-- TARJETA ESTUDIANTE -->
       <div onclick="seleccionarRol('estudiante')" class="bg-white border-4 border-sky-200 rounded-3xl p-8 cursor-pointer transition-all card-shadow group">
-        <div class="w-16 h-16 rounded-2xl bg-sky-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">
-          E
-        </div>
+        <div class="w-16 h-16 rounded-2xl bg-sky-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">E</div>
         <h3 class="text-2xl font-bold text-sky-700 mb-3">Alumnos</h3>
-        <p class="text-stone-600 leading-relaxed font-medium">
-          Mira tus lecciones, escucha los audios y aprende cosas nuevas.
-        </p>
-        <div class="mt-8 flex items-center text-sky-600 font-bold">
-          <span>¡Empezar!</span>
-          <span class="ml-2">→</span>
-        </div>
+        <p class="text-stone-600 leading-relaxed font-medium">Mira tus lecciones, escucha los audios y aprende cosas nuevas.</p>
+        <div class="mt-8 flex items-center text-sky-600 font-bold"><span>¡Empezar!</span><span class="ml-2">→</span></div>
       </div>
 
-      <!-- TARJETA CONFIGURACIÓN -->
-      <div onclick="seleccionarRol('configuracion')" class="bg-white border-4 border-emerald-200 rounded-3xl p-8 cursor-pointer transition-all card-shadow group">
-        <div class="w-16 h-16 rounded-2xl bg-emerald-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">
-          C
-        </div>
-        <h3 class="text-2xl font-bold text-emerald-700 mb-3">Biblioteca</h3>
-        <p class="text-stone-600 leading-relaxed font-medium">
-          Organiza los libros digitales y la información del sistema.
-        </p>
-        <div class="mt-8 flex items-center text-emerald-600 font-bold">
-          <span>Administrar</span>
-          <span class="ml-2">→</span>
-        </div>
+      <!-- TARJETA TRADUCTOR (antes Biblioteca) -->
+      <div onclick="seleccionarRol('traductor')" class="bg-white border-4 border-emerald-200 rounded-3xl p-8 cursor-pointer transition-all card-shadow group">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-500 flex items-center justify-center text-white text-3xl font-bold mb-6 group-hover:scale-110 transition-transform">T</div>
+        <h3 class="text-2xl font-bold text-emerald-700 mb-3">Traductor</h3>
+        <p class="text-stone-600 leading-relaxed font-medium">Traduce palabras entre español y otomí. Para alumnos y maestros.</p>
+        <div class="mt-8 flex items-center text-emerald-600 font-bold"><span>Traducir</span><span class="ml-2">→</span></div>
       </div>
 
     </div>
 
     <!-- PANEL DE ACCIÓN DINÁMICO -->
-    <div id="vistaDinamica" class="mt-12 bg-white border-4 border-stone-200 rounded-3xl p-8 hidden">
-      <!-- Contenido dinámico -->
-    </div>
+    <div id="vistaDinamica" class="mt-12 bg-white border-4 border-stone-200 rounded-3xl p-8 hidden"></div>
 
   </main>
 
@@ -99,6 +76,52 @@
   </footer>
 
   <script>
+    /* ---------- VOCABULARIO BASE (editable por maestros desde el traductor) ---------- */
+    const vocabulario = [
+      { espanol: "Escuela", otomi: "Ntahuí", pronuncia: "Nta-hui", icono: "🏫", desc: "Centro de aprendizaje comunitario" },
+      { espanol: "Agua", otomi: "Deje", pronuncia: "De-he", icono: "💧", desc: "Vital recurso natural de la región" },
+      { espanol: "Niño / Niña", otomi: "Bätsi", pronuncia: "Bä-tsi", icono: "👧🏽", desc: "Estudiante de la comunidad" },
+      { espanol: "Monte / Bosque", otomi: "Zithu", pronuncia: "Zi-thu", icono: "🌲", desc: "Entorno natural de Temoaya" },
+      { espanol: "Fuego", otomi: "Hñä", pronuncia: "Hñä", icono: "🔥", desc: "Calor y hogar tradicional" },
+      { espanol: "Casa", otomi: "K'ü", pronuncia: "Kü", icono: "🏠", desc: "Vivienda familiar local" }
+    ];
+
+    let direccion = 'es-ot'; // es-ot = Español → Otomí | ot-es = Otomí → Español
+
+    /* ---------- UTILIDADES ---------- */
+    function normalizar(t) {
+      return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\p{L}\p{N}\s']/gu, '').trim();
+    }
+
+    function leerExtras() {
+      try { return JSON.parse(localStorage.getItem('natho_diccionario') || '[]'); }
+      catch (e) { return []; }
+    }
+
+    // Diccionario completo: base + palabras agregadas por maestros
+    function construirDiccionario() {
+      const mapa = { 'es-ot': {}, 'ot-es': {} };
+      const todas = [
+        ...vocabulario.map(v => ({ es: v.espanol.split('/').map(s => s.trim()), ot: v.otomi })),
+        ...leerExtras().map(v => ({ es: [v.es], ot: v.ot }))
+      ];
+      todas.forEach(p => {
+        p.es.forEach(e => { mapa['es-ot'][normalizar(e)] = p.ot; });
+        mapa['ot-es'][normalizar(p.ot)] = p.es.join(' / ');
+      });
+      return mapa;
+    }
+
+    function hablar(texto) {
+      const synth = window.speechSynthesis;
+      if (!synth) return;
+      synth.cancel();
+      const u = new SpeechSynthesisUtterance(texto);
+      u.lang = 'es-MX';
+      synth.speak(u);
+    }
+
+    /* ---------- PANELES ---------- */
     function seleccionarRol(rol) {
       const contenedor = document.getElementById('vistaDinamica');
       contenedor.classList.remove('hidden');
@@ -119,18 +142,8 @@
           <button onclick="guardarLeccion()" class="mt-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg active:transform active:scale-95">Guardar en Base de Datos Local</button>
         `;
       } else if (rol === 'estudiante') {
-        // Banco de tarjetas interactivas de vocabulario local (Temoaya / San Pedro Arriba)
-        const vocabulario = [
-          { espanol: "Escuela", otomi: "Ntahuí", pronuncia: "Nta-hui", icono: "🏫", desc: "Centro de aprendizaje comunitario" },
-          { espanol: "Agua", otomi: "Deje", pronuncia: "De-he", icono: "💧", desc: "Vital recurso natural de la región" },
-          { espanol: "Niño / Niña", otomi: "Bätsi", pronuncia: "Bä-tsi", icono: "👧🏽", desc: "Estudiante de la comunidad" },
-          { espanol: "Monte / Bosque", otomi: "Zithu", pronuncia: "Zi-thu", icono: "🌲", desc: "Entorno natural de Temoaya" },
-          { espanol: "Fuego", otomi: "Hñä", pronuncia: "Hñä", icono: "🔥", desc: "Calor y hogar tradicional" },
-          { espanol: "Casa", otomi: "K'ü", pronuncia: "Kü", icono: "🏠", desc: "Vivienda familiar local" }
-        ];
-
         let tarjetasHTML = '';
-        vocabulario.forEach(item => {
+        vocabulario.forEach((item, i) => {
           tarjetasHTML += `
             <div class="bg-sky-50 border-2 border-sky-200 rounded-3xl p-6 flex flex-col justify-between hover:scale-105 transition-transform shadow-sm">
               <div>
@@ -140,7 +153,7 @@
                 <p class="text-xs text-stone-500 italic mt-1">Pronunciación: [ ${item.pronuncia} ]</p>
                 <p class="text-xs text-stone-600 mt-3 font-medium">${item.desc}</p>
               </div>
-              <button onclick="reproducirAudio('${item.otomi}', '${item.espanol}')" class="mt-6 bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow cursor-pointer">
+              <button onclick="reproducirAudio(${i})" class="mt-6 bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow cursor-pointer">
                 🔊 Escuchar pronunciación
               </button>
             </div>
@@ -162,17 +175,53 @@
         contenedor.className = "mt-12 bg-white border-4 border-emerald-200 rounded-3xl p-8";
         contenedor.innerHTML = `
           <div class="flex justify-between items-start mb-6">
-            <h3 class="text-2xl font-bold text-emerald-700">Gestión de Datos Local</h3>
+            <div>
+              <h3 class="text-2xl font-bold text-emerald-700">Traductor Español ⇄ Otomí</h3>
+              <p class="text-stone-600">Escribe una palabra o frase corta y toca “Traducir”.</p>
+            </div>
             <button onclick="cerrarVista()" class="bg-stone-100 hover:bg-stone-200 text-stone-500 font-bold py-2 px-4 rounded-xl transition">Cerrar</button>
           </div>
-          <div class="space-y-4 mb-6">
-            <div class="flex items-center p-4 bg-emerald-50 rounded-xl">
-              <div class="w-3 h-3 bg-emerald-500 rounded-full mr-3"></div>
-              <span class="text-stone-700 font-medium italic text-sm">Almacenamiento local optimizado y activo (Modo Offline)</span>
-            </div>
+
+          <div class="flex items-center gap-3 mb-4">
+            <span id="etiquetaOrigen" class="font-bold text-emerald-800 bg-emerald-50 border-2 border-emerald-200 rounded-xl px-4 py-2"></span>
+            <button onclick="cambiarDireccion()" title="Cambiar idiomas" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold w-11 h-11 rounded-xl transition text-xl">⇄</button>
+            <span id="etiquetaDestino" class="font-bold text-emerald-800 bg-emerald-50 border-2 border-emerald-200 rounded-xl px-4 py-2"></span>
           </div>
-          <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">Verificar Integridad del Diccionario</button>
+
+          <textarea id="textoOrigen" class="w-full h-28 bg-stone-50 border-2 border-stone-200 rounded-2xl p-4 text-xl text-stone-700 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 outline-none transition" placeholder="Escribe aquí..."></textarea>
+
+          <div class="flex flex-wrap gap-3 mt-4">
+            <button onclick="traducir()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-2xl transition shadow-md active:scale-95">Traducir</button>
+            <button onclick="limpiarTraductor()" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold py-3 px-6 rounded-2xl transition">Borrar</button>
+          </div>
+
+          <div id="resultado" class="mt-6 hidden bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5">
+            <p id="textoResultado" class="text-3xl font-bold text-emerald-900 break-words"></p>
+            <p id="avisoResultado" class="text-sm text-stone-600 mt-2"></p>
+            <button onclick="escucharResultado()" class="mt-4 bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl transition text-sm">🔊 Escuchar</button>
+          </div>
+
+          <div class="mt-8">
+            <p class="font-bold text-stone-700 mb-3">Toca una palabra para probar:</p>
+            <div id="sugerencias" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <details class="mt-8 bg-stone-50 border-2 border-stone-200 rounded-2xl p-5">
+            <summary class="font-bold text-orange-700 cursor-pointer">Maestros: agregar una palabra al diccionario</summary>
+            <p class="text-sm text-stone-600 mt-3">Las palabras se guardan en este dispositivo. Verifica la escritura con un hablante de otomí antes de usarlas en clase.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+              <input id="nuevaEs" type="text" placeholder="Español (ej. Perro)" class="bg-white border-2 border-stone-200 rounded-xl p-3 outline-none focus:border-orange-400">
+              <input id="nuevaOt" type="text" placeholder="Otomí" class="bg-white border-2 border-stone-200 rounded-xl p-3 outline-none focus:border-orange-400">
+            </div>
+            <button onclick="agregarPalabra()" class="mt-4 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition">Agregar palabra</button>
+            <p id="avisoAgregar" class="text-sm font-semibold text-emerald-700 mt-3"></p>
+          </details>
         `;
+        actualizarEtiquetas();
+        pintarSugerencias();
+        document.getElementById('textoOrigen').addEventListener('keydown', e => {
+          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); traducir(); }
+        });
       }
     }
 
@@ -180,6 +229,105 @@
       document.getElementById('vistaDinamica').classList.add('hidden');
     }
 
+    /* ---------- TRADUCTOR ---------- */
+    function actualizarEtiquetas() {
+      const esOt = direccion === 'es-ot';
+      document.getElementById('etiquetaOrigen').textContent = esOt ? 'Español' : 'Otomí';
+      document.getElementById('etiquetaDestino').textContent = esOt ? 'Otomí' : 'Español';
+    }
+
+    function cambiarDireccion() {
+      direccion = direccion === 'es-ot' ? 'ot-es' : 'es-ot';
+      actualizarEtiquetas();
+      limpiarTraductor();
+      pintarSugerencias();
+    }
+
+    function pintarSugerencias() {
+      const cont = document.getElementById('sugerencias');
+      const mapa = construirDiccionario()[direccion];
+      // Muestra una palabra por entrada (la clave original sin repetir)
+      const vistos = new Set();
+      let html = '';
+      Object.keys(mapa).forEach(clave => {
+        const destino = mapa[clave];
+        if (vistos.has(destino)) return;
+        vistos.add(destino);
+        html += `<button data-palabra="${clave}" class="sug bg-white hover:bg-emerald-100 border-2 border-emerald-200 text-emerald-800 font-bold py-2 px-4 rounded-full transition">${clave}</button>`;
+      });
+      cont.innerHTML = html;
+      cont.querySelectorAll('.sug').forEach(b => b.addEventListener('click', () => {
+        document.getElementById('textoOrigen').value = b.dataset.palabra;
+        traducir();
+      }));
+    }
+
+    function traducir() {
+      const texto = document.getElementById('textoOrigen').value;
+      const resultado = document.getElementById('resultado');
+      if (!texto.trim()) {
+        mostrarResultado('', 'Escribe una palabra o frase para traducir.');
+        return;
+      }
+      const mapa = construirDiccionario()[direccion];
+      const palabras = normalizar(texto).split(/\s+/).filter(Boolean);
+      const salida = [];
+      const faltan = [];
+      let i = 0;
+      while (i < palabras.length) {
+        let encontrado = false;
+        // Busca primero frases de hasta 3 palabras, luego palabras sueltas
+        for (let n = Math.min(3, palabras.length - i); n >= 1; n--) {
+          const frase = palabras.slice(i, i + n).join(' ');
+          if (mapa[frase]) { salida.push(mapa[frase]); i += n; encontrado = true; break; }
+        }
+        if (!encontrado) { salida.push('___'); faltan.push(palabras[i]); i++; }
+      }
+      const completa = faltan.length === 0;
+      const aviso = completa
+        ? (palabras.length > 1 ? 'Traducción palabra por palabra.' : '')
+        : `Aún no tengo: ${faltan.join(', ')}. Pídele a tu maestro que la agregue.`;
+      if (faltan.length === palabras.length) {
+        mostrarResultado('', `No encontré “${texto.trim()}” en el diccionario. Pídele a tu maestro que la agregue.`);
+      } else {
+        mostrarResultado(salida.join(' '), aviso);
+      }
+    }
+
+    function mostrarResultado(texto, aviso) {
+      document.getElementById('resultado').classList.remove('hidden');
+      document.getElementById('textoResultado').textContent = texto;
+      document.getElementById('avisoResultado').textContent = aviso;
+    }
+
+    function limpiarTraductor() {
+      const t = document.getElementById('textoOrigen');
+      if (t) t.value = '';
+      const r = document.getElementById('resultado');
+      if (r) r.classList.add('hidden');
+    }
+
+    function escucharResultado() {
+      const t = document.getElementById('textoResultado').textContent;
+      if (t) hablar(t);
+    }
+
+    function agregarPalabra() {
+      const es = document.getElementById('nuevaEs').value.trim();
+      const ot = document.getElementById('nuevaOt').value.trim();
+      const aviso = document.getElementById('avisoAgregar');
+      if (!es || !ot) { aviso.className = 'text-sm font-semibold text-red-600 mt-3'; aviso.textContent = 'Completa las dos casillas.'; return; }
+      const extras = leerExtras();
+      extras.push({ es, ot });
+      try { localStorage.setItem('natho_diccionario', JSON.stringify(extras)); } catch (e) {}
+      document.getElementById('nuevaEs').value = '';
+      document.getElementById('nuevaOt').value = '';
+      aviso.className = 'text-sm font-semibold text-emerald-700 mt-3';
+      aviso.textContent = `Agregada: ${es} = ${ot}`;
+      pintarSugerencias();
+    }
+
+    /* ---------- LECCIONES Y AUDIO ---------- */
     function guardarLeccion() {
       const titulo = document.getElementById('inputTitulo').value;
       const contenido = document.getElementById('inputContenido').value;
@@ -203,12 +351,9 @@
       document.getElementById('inputContenido').value = '';
     }
 
-    function reproducirAudio(palabraOtomi, palabraEspanol) {
-      const synth = window.speechSynthesis;
-      const textoAMostrar = `Otomí: ${palabraOtomi}. En español: ${palabraEspanol}`;
-      const utterThis = new SpeechSynthesisUtterance(textoAMostrar);
-      utterThis.lang = 'es-MX';
-      synth.speak(utterThis);
+    function reproducirAudio(indice) {
+      const v = vocabulario[indice];
+      hablar(`Otomí: ${v.otomi}. En español: ${v.espanol}`);
     }
   </script>
 
