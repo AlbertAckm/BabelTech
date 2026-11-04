@@ -3,143 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Natho Ya Bätsi - El Niño Habla</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f4f6f9; color: #333; padding: 20px; }
-    
-    header {
-      background-color: #2c3e50;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .badge-offline {
-      background-color: #27ae60;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: bold;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-
-    h2 { font-size: 1.2rem; margin-bottom: 15px; color: #2c3e50; }
-
-    textarea {
-      width: 100%;
-      height: 180px;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      resize: none;
-      font-size: 0.95rem;
-    }
-
-    button {
-      background-color: #2980b9;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-
-    button:hover { background-color: #3498db; }
-
-    .output-box {
-      background-color: #f8f9fa;
-      border: 1px dashed #bdc3c7;
-      padding: 15px;
-      border-radius: 6px;
-      min-height: 180px;
-      font-size: 1.05rem;
-      line-height: 1.5;
-    }
-
-    .audio-controls {
-      margin-top: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-audio {
-      background-color: #e67e22;
-    }
-    .btn-audio:hover { background-color: #d35400; }
-  </style>
+  <title>Natho Ya Bätsi - Panel Principal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-  <header>
+  <!-- CABECERA INSTITUCIONAL -->
+  <header class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shadow-md">
     <div>
-      <h1>Natho Ya Bätsi - El Niño Habla</h1>
-      <small>Adaptación Pedagógica al Otomí de Temoaya</small>
+      <h1 class="text-xl font-bold tracking-tight text-white">Natho Ya Bätsi</h1>
+      <p class="text-xs text-slate-400">Sistema de Adaptación Pedagógica • Temoaya, Estado de México</p>
     </div>
-    <span class="badge-offline">Modo Offline 80/90%</span>
+    <div class="flex items-center space-x-3">
+      <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs font-medium px-3 py-1.5 rounded-md">
+        Entorno Offline • 80/90%
+      </span>
+    </div>
   </header>
 
-  <div class="container">
-    <!-- Módulo Docente -->
-    <div class="card">
-      <h2>Módulo Docente (Español)</h2>
-      <textarea id="inputText" placeholder="Escribe o pega aquí la lección en español (ej. 'El autobús transporta a 10 personas')..."></textarea>
-      <br>
-      <button onclick="adaptarTexto()">Adaptar y Traducir a Otomí</button>
+  <!-- PANEL PRINCIPAL DE SELECCIÓN DE USUARIO Y OPCIONES -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-8 flex flex-col justify-center">
+    
+    <div class="mb-8 text-center">
+      <h2 class="text-2xl font-bold text-white mb-2">Seleccione el perfil de acceso</h2>
+      <p class="text-sm text-slate-400">Elija su rol dentro de la plataforma para cargar el módulo correspondiente.</p>
     </div>
 
-    <!-- Módulo Estudiante -->
-    <div class="card">
-      <h2>Módulo Estudiante (Natho / Otomí)</h2>
-      <div id="outputText" class="output-box">
-        <i>El contenido adaptado aparecerá aquí...</i>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- TARJETA ROL DOCENTE -->
+      <div onclick="seleccionarRol('docente')" class="bg-slate-900 border border-slate-800 hover:border-emerald-600 rounded-xl p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-lg">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 font-bold mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
+            D
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-1">Módulo Docente</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Carga de contenidos escolares, gestión de temarios y traducción pedagógica al otomí de Temoaya.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-800 text-xs font-semibold text-emerald-400 flex items-center justify-between">
+          <span>Acceder al panel</span>
+          <span>→</span>
+        </div>
       </div>
-      <div class="audio-controls">
-        <button class="btn-audio" onclick="reproducirAudio()">🔊 Escuchar Lección (Audio)</button>
-      </div>
-    </div>
-  </div>
 
+      <!-- TARJETA ROL ESTUDIANTE -->
+      <div onclick="seleccionarRol('estudiante')" class="bg-slate-900 border border-slate-800 hover:border-sky-600 rounded-xl p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-lg">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400 font-bold mb-4 group-hover:bg-sky-600 group-hover:text-white transition">
+            E
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-1">Módulo Estudiante</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Visualización de lecciones adaptadas con soporte de audio nativo y ejemplos contextuales locales.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-800 text-xs font-semibold text-sky-400 flex items-center justify-between">
+          <span>Acceder al panel</span>
+          <span>→</span>
+        </div>
+      </div>
+
+      <!-- TARJETA ROL CONFIGURACIÓN / REPOSITORIO -->
+      <div onclick="seleccionarRol('configuracion')" class="bg-slate-900 border border-slate-800 hover:border-indigo-600 rounded-xl p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-lg">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-indigo-950 border border-indigo-800 flex items-center justify-center text-indigo-400 font-bold mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
+            C
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-1">Base de Datos y Léxico</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Administración del diccionario local SQLite, respaldo de archivos y sincronización del repositorio Git.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-800 text-xs font-semibold text-indigo-400 flex items-center justify-between">
+          <span>Gestionar datos</span>
+          <span>→</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CONTENEDOR DINÁMICO DE VISTAS -->
+    <div id="vistaDinamica" class="mt-8 bg-slate-900 border border-slate-800 rounded-xl p-6 hidden">
+      <!-- Aquí se cargará dinámicamente el contenido según el rol seleccionado -->
+    </div>
+
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-900">
+    Equipo 3: BabelTech • Hackatón Reto 6
+  </footer>
+
+  <!-- LÓGICA DE CONTROL DE ROLES -->
   <script>
-    function adaptarTexto() {
-      const input = document.getElementById('inputText').value;
-      const output = document.getElementById('outputText');
+    function seleccionarRol(rol) {
+      const contenedor = document.getElementById('vistaDinamica');
+      contenedor.classList.remove('hidden');
 
-      if (!input.trim()) {
-        output.innerHTML = '<i>Por favor ingresa un texto en el módulo docente.</i>';
-        return;
+      if (rol === 'docente') {
+        contenedor.innerHTML = `
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-emerald-400">Panel de Control: Docente</h3>
+            <button onclick="cerrarVista()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded">Cerrar</button>
+          </div>
+          <p class="text-sm text-slate-300 mb-4">Ingrese la lección escolar en español para procesar su adaptación al contexto de Temoaya.</p>
+          <textarea class="w-full h-32 bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-200 text-sm focus:outline-none focus:border-emerald-600" placeholder="Escriba el texto del contenido académico..."></textarea>
+          <button class="mt-3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 text-sm font-semibold px-4 py-2 rounded-lg transition">Guardar y Procesar Localmente</button>
+        `;
+      } else if (rol === 'estudiante') {
+        contenedor.innerHTML = `
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-sky-400">Panel de Control: Estudiante</h3>
+            <button onclick="cerrarVista()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded">Cerrar</button>
+          </div>
+          <p class="text-sm text-slate-300 mb-4">Seleccione la unidad de aprendizaje disponible en el sistema local:</p>
+          <div class="space-y-2">
+            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg flex justify-between items-center text-sm">
+              <span>Unidad 1: Matemáticas Básicas (Variante Otomí de San Pedro Arriba)</span>
+              <button class="bg-sky-600 hover:bg-sky-500 text-white text-xs px-3 py-1.5 rounded font-medium">Abrir Lección</button>
+            </div>
+          </div>
+        `;
+      } else {
+        contenedor.innerHTML = `
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-indigo-400">Administración de Base de Datos y Repositorio</h3>
+            <button onclick="cerrarVista()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded">Cerrar</button>
+          </div>
+          <p class="text-sm text-slate-300 mb-2">Estado de la base de datos local SQLite: <span class="text-emerald-400 font-mono">Conectada (natho_db.sqlite)</span></p>
+          <p class="text-sm text-slate-300 mb-4">Control de versiones Git: <span class="text-indigo-400 font-mono">Rama principal (main) sincronizada</span></p>
+          <button class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">Verificar Integridad Local</button>
+        `;
       }
-
-      // Prototipo de sustitución pedagógica contextual
-      let adaptado = input
-        .replace(/autobús/gi, 'camión de San Pedro')
-        .replace(/ciudad/gi, 'comunidad');
-
-      output.innerHTML = `<strong>[Traducción al Otomí (Natho)]:</strong><br><br>${adaptado} (Versión adaptada con léxico de Temoaya)`;
     }
 
-    function reproducirAudio() {
-      alert("Reproduciendo audio local en Otomí...");
+    function cerrarVista() {
+      document.getElementById('vistaDinamica').classList.add('hidden');
     }
   </script>
 
