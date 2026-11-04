@@ -1,19 +1,25 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Natho Ya Bätsi - Panel Principal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Quicksand', sans-serif; }
-    .card-shadow { box-shadow: 0 8px 0px rgba(0,0,0,0.05); }
-    .card-shadow:hover { transform: translateY(-2px); box-shadow: 0 12px 0px rgba(0,0,0,0.07); }
-    .card-shadow:active { transform: translateY(4px); box-shadow: 0 2px 0px rgba(0,0,0,0.05); }
-  </style>
+
+  <!-- Recursos locales (sin internet). Se generan con: node preparar-offline.js -->
+  <link rel="stylesheet" href="vendor/fonts.css">
+  <link rel="stylesheet" href="vendor/tailwind.css">
+
+  <!-- Vosk (reconocimiento de voz local). En Electron con nodeIntegration, los scripts
+       UMD se registran como módulo en vez de global; se quitan estas variables
+       temporalmente para que "Vosk" quede disponible en window. -->
+  <script>
+    window.__nodeRequire = window.require;
+    delete window.require; delete window.exports; delete window.module;
+  </script>
+  <script src="vendor/vosk.js"></script>
+  <script>
+    if (window.__nodeRequire) window.require = window.__nodeRequire;
+  </script>
 </head>
 <body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col">
 
@@ -90,7 +96,7 @@
 
     /* ---------- UTILIDADES ---------- */
     function normalizar(t) {
-      return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\p{L}\p{N}\s']/gu, '').trim();
+      return t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\p{L}\p{N}\s']/gu, '').trim();
     }
 
     function leerExtras() {
@@ -177,7 +183,7 @@
           <div class="flex justify-between items-start mb-6">
             <div>
               <h3 class="text-2xl font-bold text-emerald-700">Traductor Español ⇄ Otomí</h3>
-              <p class="text-stone-600">Escribe una palabra o frase corta y toca “Traducir”.</p>
+              <p class="text-stone-600">Escribe una palabra o frase corta, o toca “Hablar”, y luego “Traducir”.</p>
             </div>
             <button onclick="cerrarVista()" class="bg-stone-100 hover:bg-stone-200 text-stone-500 font-bold py-2 px-4 rounded-xl transition">Cerrar</button>
           </div>
@@ -192,6 +198,7 @@
 
           <div class="flex flex-wrap gap-3 mt-4">
             <button onclick="traducir()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-2xl transition shadow-md active:scale-95">Traducir</button>
+            <button id="btnMic" onclick="escucharVoz()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-2xl transition shadow-md active:scale-95">🎤 Hablar</button>
             <button onclick="limpiarTraductor()" class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold py-3 px-6 rounded-2xl transition">Borrar</button>
           </div>
 
@@ -226,6 +233,7 @@
     }
 
     function cerrarVista() {
+      if (typeof sesionVoz !== 'undefined' && sesionVoz) detenerVoz(false);
       document.getElementById('vistaDinamica').classList.add('hidden');
     }
 
@@ -237,6 +245,7 @@
     }
 
     function cambiarDireccion() {
+      if (sesionVoz) detenerVoz(false);
       direccion = direccion === 'es-ot' ? 'ot-es' : 'es-ot';
       actualizarEtiquetas();
       limpiarTraductor();
@@ -325,6 +334,86 @@
       aviso.className = 'text-sm font-semibold text-emerald-700 mt-3';
       aviso.textContent = `Agregada: ${es} = ${ot}`;
       pintarSugerencias();
+    }
+
+    /* ---------- MICRÓFONO: ESPAÑOL → OTOMÍ (reconocimiento local con Vosk, sin internet) ---------- */
+    let modeloVosk = null, sesionVoz = null;
+
+    async function cargarModelo() {
+      if (modeloVosk) return modeloVosk;
+      if (typeof Vosk === 'undefined') throw new Error('sin-vosk');
+      modeloVosk = await Vosk.createModel('http://127.0.0.1:8765/vosk-model-small-es-0.42.tar.gz');
+      return modeloVosk;
+    }
+
+    async function escucharVoz() {
+      const boton = document.getElementById('btnMic');
+      const caja = document.getElementById('textoOrigen');
+
+      if (direccion === 'ot-es') {
+        mostrarResultado('', 'El micrófono solo funciona de Español a Otomí. Cambia la dirección con ⇄.');
+        return;
+      }
+      // Segundo toque = detener y traducir
+      if (sesionVoz) { detenerVoz(true); return; }
+
+      try {
+        boton.disabled = true;
+        boton.textContent = '⏳ Cargando modelo...';
+        const modelo = await cargarModelo();
+        boton.disabled = false;
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: false,
+          audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 }
+        });
+        const ctx = new AudioContext();
+        const reco = new modelo.KaldiRecognizer(ctx.sampleRate);
+        let textoFinal = '';
+
+        reco.on('result', (m) => {
+          const t = m.result.text;
+          if (t) { textoFinal = (textoFinal + ' ' + t).trim(); caja.value = textoFinal; }
+        });
+        reco.on('partialresult', (m) => {
+          if (m.result.partial) caja.value = (textoFinal + ' ' + m.result.partial).trim();
+        });
+
+        const fuente = ctx.createMediaStreamSource(stream);
+        const nodo = ctx.createScriptProcessor(4096, 1, 1);
+        nodo.onaudioprocess = (e) => { try { reco.acceptWaveform(e.inputBuffer); } catch (_) {} };
+        fuente.connect(nodo);
+        nodo.connect(ctx.destination);
+
+        sesionVoz = { stream, ctx, fuente, nodo, reco };
+        boton.textContent = '🔴 Escuchando... (toca para parar)';
+      } catch (e) {
+        boton.disabled = false;
+        boton.textContent = '🎤 Hablar';
+        sesionVoz = null;
+        const msg = (e && e.name === 'NotAllowedError') ? 'No hay permiso para usar el micrófono.'
+                  : (e && e.name === 'NotFoundError') ? 'No se encontró un micrófono.'
+                  : (e && e.message === 'sin-vosk') ? 'Falta vendor/vosk.js. Ejecuta una vez: node preparar-offline.js'
+                  : 'No se pudo cargar el modelo de voz. Revisa que exista modelo/vosk-model-small-es-0.42.tar.gz';
+        mostrarResultado('', msg);
+      }
+    }
+
+    function detenerVoz(traducirAlFinal) {
+      const s = sesionVoz;
+      if (!s) return;
+      sesionVoz = null;
+      s.nodo.disconnect();
+      s.fuente.disconnect();
+      s.stream.getTracks().forEach(t => t.stop());
+      try { s.reco.retrieveFinalResult(); } catch (_) {}   // fuerza el resultado de lo último que dijiste
+      setTimeout(() => {
+        try { s.ctx.close(); } catch (_) {}
+        try { s.reco.remove(); } catch (_) {}
+        const boton = document.getElementById('btnMic');
+        if (boton) boton.textContent = '🎤 Hablar';
+        if (traducirAlFinal) traducir();
+      }, 800);
     }
 
     /* ---------- LECCIONES Y AUDIO ---------- */
