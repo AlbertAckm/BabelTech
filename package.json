@@ -1,0 +1,24 @@
+﻿{
+  "name": "natho-ya-batsi",
+  "version": "1.0.0",
+  "description": "Prototipo educativo offline para adaptar contenidos al otomí de Temoaya",
+  "main": "main/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "education",
+    "otomi",
+    "temoaya",
+    "electron",
+    "offline-first"
+  ],
+  "author": "Equipo 3 - BabelTech",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.6"
+  }
+}
