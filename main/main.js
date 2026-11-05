@@ -2,7 +2,7 @@ const { app, BrowserWindow, session, systemPreferences } = require('electron');
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
-require('../database/database.js');
+//require('../database/database.js');
 
 /* ---------- Servidor local del modelo de voz (Vosk) ----------
    Solo escucha en 127.0.0.1: no sale a internet. Sirve únicamente
