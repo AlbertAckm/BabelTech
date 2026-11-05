@@ -1,8 +1,24 @@
-const { app, BrowserWindow, session, systemPreferences } = require('electron');
+const { app, BrowserWindow, session, systemPreferences, ipcMain } = require('electron');
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
-//require('../database/database.js');
+const { listarDiccionario, guardarPalabra } = require('../database/database.js');
+
+/* ---------- Diccionario (la base de datos vive en database/database.js) ---------- */
+ipcMain.handle('diccionario:listar', () => listarDiccionario());
+
+ipcMain.handle('diccionario:agregar', (_evento, datos) =>
+  guardarPalabra(datos && datos.es, datos && datos.ot, datos && datos.pr)
+);
+
+// Pasa a la base las palabras que antes se guardaban en localStorage
+ipcMain.handle('diccionario:importar', async (_evento, lista) => {
+  let importadas = 0;
+  for (const p of Array.isArray(lista) ? lista : []) {
+    try { await guardarPalabra(p.es, p.ot, p.pr); importadas++; } catch (_) {}
+  }
+  return importadas;
+});
 
 /* ---------- Servidor local del modelo de voz (Vosk) ----------
    Solo escucha en 127.0.0.1: no sale a internet. Sirve únicamente

@@ -91,30 +91,62 @@
       { espanol: "Fuego", otomi: "Hñä", pronuncia: "Hñä", icono: "🔥", desc: "Calor y hogar tradicional" },
       { espanol: "Casa", otomi: "K'ü", pronuncia: "Kü", icono: "🏠", desc: "Vivienda familiar local" }
     ];
-    
 
     let direccion = 'es-ot'; // es-ot = Español → Otomí | ot-es = Otomí → Español
+
+    // Conexión con la base de datos SQLite (vive en main.js; solo existe en la app de escritorio)
+    let ipcRenderer = null;
+    try { ipcRenderer = require('electron').ipcRenderer; } catch (e) {}
 
     /* ---------- UTILIDADES ---------- */
     function normalizar(t) {
       return t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\p{L}\p{N}\s']/gu, '').trim();
     }
 
-    function leerExtras() {
-      try { return JSON.parse(localStorage.getItem('natho_diccionario') || '[]'); }
-      catch (e) { return []; }
+    // Palabras agregadas por maestros: se leen de la base de datos y se guardan en esta copia en memoria
+    let extrasCache = [];
+
+    function leerExtras() { return extrasCache; }
+
+    async function cargarExtras() {
+      if (!ipcRenderer) return;
+      try {
+        const filas = await ipcRenderer.invoke('diccionario:listar');
+        // Las palabras base del vocabulario ya están en el código: no se duplican
+        const base = new Set();
+        vocabulario.forEach(v => v.espanol.split('/').forEach(e => base.add(normalizar(e))));
+        extrasCache = filas
+          .filter(f => f.es && f.ot && !base.has(normalizar(f.es)))
+          .map(f => ({ es: f.es, ot: f.ot, pr: f.pr || '' }));
+      } catch (e) { console.error('No se pudo leer el diccionario:', e); }
+      if (document.getElementById('sugerencias')) pintarSugerencias();
     }
+
+    // Al abrir la app: pasa a la base las palabras viejas de localStorage (una sola vez) y carga el diccionario
+    async function iniciarDiccionario() {
+      if (!ipcRenderer) return;
+      try {
+        const viejas = JSON.parse(localStorage.getItem('natho_diccionario') || '[]');
+        if (viejas.length) {
+          await ipcRenderer.invoke('diccionario:importar', viejas);
+          localStorage.removeItem('natho_diccionario');
+        }
+      } catch (e) { console.error('No se pudieron pasar las palabras anteriores:', e); }
+      await cargarExtras();
+    }
+    iniciarDiccionario();
 
     // Diccionario completo: base + palabras agregadas por maestros
     function construirDiccionario() {
-      const mapa = { 'es-ot': {}, 'ot-es': {} };
+      const mapa = { 'es-ot': {}, 'ot-es': {}, pron: {} };
       const todas = [
-        ...vocabulario.map(v => ({ es: v.espanol.split('/').map(s => s.trim()), ot: v.otomi })),
-        ...leerExtras().map(v => ({ es: [v.es], ot: v.ot }))
+        ...vocabulario.map(v => ({ es: v.espanol.split('/').map(s => s.trim()), ot: v.otomi, pr: v.pronuncia })),
+        ...leerExtras().map(v => ({ es: [v.es], ot: v.ot, pr: v.pr || '' }))
       ];
       todas.forEach(p => {
         p.es.forEach(e => { mapa['es-ot'][normalizar(e)] = p.ot; });
         mapa['ot-es'][normalizar(p.ot)] = p.es.join(' / ');
+        if (p.pr) mapa.pron[normalizar(p.ot)] = p.pr;   // pronunciación, por palabra en otomí
       });
       return mapa;
     }
@@ -205,6 +237,7 @@
 
           <div id="resultado" class="mt-6 hidden bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5">
             <p id="textoResultado" class="text-3xl font-bold text-emerald-900 break-words"></p>
+            <p id="pronResultado" class="text-lg italic text-stone-600 mt-1 break-words"></p>
             <p id="avisoResultado" class="text-sm text-stone-600 mt-2"></p>
             <button onclick="escucharResultado()" class="mt-4 bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl transition text-sm">🔊 Escuchar</button>
           </div>
@@ -217,9 +250,10 @@
           <details class="mt-8 bg-stone-50 border-2 border-stone-200 rounded-2xl p-5">
             <summary class="font-bold text-orange-700 cursor-pointer">Maestros: agregar una palabra al diccionario</summary>
             <p class="text-sm text-stone-600 mt-3">Las palabras se guardan en este dispositivo. Verifica la escritura con un hablante de otomí antes de usarlas en clase.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
               <input id="nuevaEs" type="text" placeholder="Español (ej. Perro)" class="bg-white border-2 border-stone-200 rounded-xl p-3 outline-none focus:border-orange-400">
-              <input id="nuevaOt" type="text" placeholder="Otomí" class="bg-white border-2 border-stone-200 rounded-xl p-3 outline-none focus:border-orange-400">
+              <input id="nuevaOt" type="text" placeholder="Otomí (cómo se escribe)" class="bg-white border-2 border-stone-200 rounded-xl p-3 outline-none focus:border-orange-400">
+              <input id="nuevaPr" type="text" placeholder="Pronunciación (ej. De-he)" class="bg-white border-2 border-stone-200 rounded-xl p-3 outline-none focus:border-orange-400">
             </div>
             <button onclick="agregarPalabra()" class="mt-4 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition">Agregar palabra</button>
             <p id="avisoAgregar" class="text-sm font-semibold text-emerald-700 mt-3"></p>
@@ -279,17 +313,23 @@
         mostrarResultado('', 'Escribe una palabra o frase para traducir.');
         return;
       }
-      const mapa = construirDiccionario()[direccion];
+      const dic = construirDiccionario();
+      const mapa = dic[direccion];
       const palabras = normalizar(texto).split(/\s+/).filter(Boolean);
       const salida = [];
       const faltan = [];
+      const otPiezas = [];   // las palabras en otomí (escritas o traducidas), para mostrar su pronunciación
       let i = 0;
       while (i < palabras.length) {
         let encontrado = false;
         // Busca primero frases de hasta 3 palabras, luego palabras sueltas
         for (let n = Math.min(3, palabras.length - i); n >= 1; n--) {
           const frase = palabras.slice(i, i + n).join(' ');
-          if (mapa[frase]) { salida.push(mapa[frase]); i += n; encontrado = true; break; }
+          if (mapa[frase]) {
+            salida.push(mapa[frase]);
+            otPiezas.push(direccion === 'es-ot' ? mapa[frase] : frase);
+            i += n; encontrado = true; break;
+          }
         }
         if (!encontrado) { salida.push('___'); faltan.push(palabras[i]); i++; }
       }
@@ -300,13 +340,17 @@
       if (faltan.length === palabras.length) {
         mostrarResultado('', `No encontré “${texto.trim()}” en el diccionario. Pídele a tu maestro que la agregue.`);
       } else {
-        mostrarResultado(salida.join(' '), aviso);
+        // Pronunciación del otomí; si a una palabra no se le registró, se marca con "?"
+        const prons = otPiezas.map(o => dic.pron[normalizar(o)]);
+        const pron = prons.some(Boolean) ? prons.map(p => p || '?').join(' ') : '';
+        mostrarResultado(salida.join(' '), aviso, pron);
       }
     }
 
-    function mostrarResultado(texto, aviso) {
+    function mostrarResultado(texto, aviso, pron = '') {
       document.getElementById('resultado').classList.remove('hidden');
       document.getElementById('textoResultado').textContent = texto;
+      document.getElementById('pronResultado').textContent = pron ? `Se pronuncia: [ ${pron} ]` : '';
       document.getElementById('avisoResultado').textContent = aviso;
     }
 
@@ -322,18 +366,26 @@
       if (t) hablar(t);
     }
 
-    function agregarPalabra() {
+    async function agregarPalabra() {
       const es = document.getElementById('nuevaEs').value.trim();
       const ot = document.getElementById('nuevaOt').value.trim();
+      const pr = document.getElementById('nuevaPr').value.trim();
       const aviso = document.getElementById('avisoAgregar');
-      if (!es || !ot) { aviso.className = 'text-sm font-semibold text-red-600 mt-3'; aviso.textContent = 'Completa las dos casillas.'; return; }
-      const extras = leerExtras();
-      extras.push({ es, ot });
-      try { localStorage.setItem('natho_diccionario', JSON.stringify(extras)); } catch (e) {}
+      if (!es || !ot) { aviso.className = 'text-sm font-semibold text-red-600 mt-3'; aviso.textContent = 'Completa el español y el otomí (la pronunciación es opcional).'; return; }
+      try {
+        if (!ipcRenderer) throw new Error('la base de datos solo funciona en la app de escritorio');
+        await ipcRenderer.invoke('diccionario:agregar', { es, ot, pr });
+        await cargarExtras();
+      } catch (e) {
+        aviso.className = 'text-sm font-semibold text-red-600 mt-3';
+        aviso.textContent = 'No se pudo guardar en la base de datos: ' + (e && e.message ? e.message : e);
+        return;
+      }
       document.getElementById('nuevaEs').value = '';
       document.getElementById('nuevaOt').value = '';
+      document.getElementById('nuevaPr').value = '';
       aviso.className = 'text-sm font-semibold text-emerald-700 mt-3';
-      aviso.textContent = `Agregada: ${es} = ${ot}`;
+      aviso.textContent = `Agregada: ${es} = ${ot}` + (pr ? ` [ ${pr} ]` : '');
       pintarSugerencias();
     }
 
